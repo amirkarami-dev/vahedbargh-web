@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   images: {
-    domains: ["cdn.fontcdn.ir"],
+    remotePatterns: [{ hostname: "cdn.fontcdn.ir" }],
   },
   async headers() {
     return [

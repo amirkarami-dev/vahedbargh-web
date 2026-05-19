@@ -1,0 +1,26 @@
+services:
+  vahedbargh-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vahedbargh-web
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vahedbargh-web.rule=Host(`kurdnezambargh2.ir`)"
+      - "traefik.http.routers.vahedbargh-web.entrypoints=websecure"
+      - "traefik.http.routers.vahedbargh-web.tls.certresolver=myresolver"
+      - "traefik.http.services.vahedbargh-web.loadbalancer.server.port=80"
+
+      - "traefik.http.routers.vahedbargh-web-ip.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.vahedbargh-web-ip.entrypoints=myport"
+    networks:
+      - traefik
+    restart: unless-stopped
+
+networks:
+  traefik:
+    external: true
