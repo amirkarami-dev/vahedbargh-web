@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Menu, X, Sun, Moon, Zap } from "lucide-react";
@@ -30,8 +31,14 @@ export function Header() {
         <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/30 group-hover:shadow-blue-600/50 transition-shadow">
-              <Zap className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-md overflow-hidden flex-shrink-0 group-hover:shadow-lg transition-shadow">
+              <Image
+                src="/logo.png"
+                alt="سازمان نظام مهندسی ساختمان"
+                width={36}
+                height={36}
+                className="object-contain"
+              />
             </div>
             <div className="hidden sm:block">
               <p className="text-sm font-bold text-[var(--text-primary)] leading-tight">دفتر اجرایی نظارت برق</p>
@@ -113,8 +120,8 @@ export function Header() {
             >
               <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-                    <Zap className="w-4 h-4 text-white" />
+                  <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center overflow-hidden">
+                    <Image src="/logo.png" alt="لوگو" width={28} height={28} className="object-contain" />
                   </div>
                   <span className="text-sm font-bold text-[var(--text-primary)]">دفتر نظارت برق</span>
                 </div>

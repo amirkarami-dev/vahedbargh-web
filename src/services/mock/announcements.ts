@@ -1,9 +1,11 @@
-import { announcements } from "@/data/announcements";
+import { announcements as seedAnnouncements } from "@/data/announcements";
 import type { Announcement, AnnouncementFilters } from "@/types";
+
+const store: Announcement[] = [...seedAnnouncements];
 
 export const mockAnnouncementService = {
   async getAll(filters?: AnnouncementFilters): Promise<Announcement[]> {
-    let result = [...announcements];
+    let result = [...store];
 
     if (filters?.priority) {
       result = result.filter((a) => a.priority === filters.priority);
@@ -24,19 +26,37 @@ export const mockAnnouncementService = {
   },
 
   async getById(id: string): Promise<Announcement | null> {
-    return announcements.find((a) => a.id === id || a.slug === id) ?? null;
+    return store.find((a) => a.id === id || a.slug === id) ?? null;
   },
 
   async getFeatured(): Promise<Announcement[]> {
-    return announcements.filter((a) => a.featured);
+    return store.filter((a) => a.featured);
   },
 
   async getUrgent(): Promise<Announcement[]> {
-    return announcements.filter((a) => a.priority === "urgent");
+    return store.filter((a) => a.priority === "urgent");
   },
 
   async getLatest(count = 4): Promise<Announcement[]> {
-    return announcements.slice(0, count);
+    return store.slice(0, count);
+  },
+
+  async create(data: Omit<Announcement, "id">): Promise<Announcement> {
+    const item: Announcement = { ...data, id: Date.now().toString() };
+    store.unshift(item);
+    return item;
+  },
+
+  async update(id: string, data: Partial<Announcement>): Promise<Announcement> {
+    const idx = store.findIndex((a) => a.id === id);
+    if (idx === -1) throw new Error("not found");
+    store[idx] = { ...store[idx], ...data };
+    return store[idx];
+  },
+
+  async delete(id: string): Promise<void> {
+    const idx = store.findIndex((a) => a.id === id);
+    if (idx !== -1) store.splice(idx, 1);
   },
 };
 

@@ -78,9 +78,9 @@ export default function ServicesPage() {
                 <div className="w-10 h-10 rounded-xl bg-blue-600/15 flex items-center justify-center mb-4">
                   <UserPlus className="w-5 h-5 text-blue-400" />
                 </div>
-                <h3 className="font-bold text-[var(--text-primary)] mb-2">ثبت‌نام پیمانکاران</h3>
+                <h3 className="font-bold text-[var(--text-primary)] mb-2">ثبت‌نام کارشناسان</h3>
                 <p className="text-sm text-[var(--text-secondary)]">
-                  فرآیند ثبت‌نام، احراز صلاحیت و تمدید اعتبار پیمانکاران حوزه برق. فرم ثبت‌نام در بخش آرشیو قابل دانلود است.
+                  فرآیند ثبت‌نام، احراز صلاحیت و تمدید اعتبار کارشناسان حوزه برق. فرم ثبت‌نام در بخش آرشیو قابل دانلود است.
                 </p>
               </div>
             </div>

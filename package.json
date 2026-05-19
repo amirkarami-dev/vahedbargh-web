@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@persian-tools/persian-tools": "^4.0.4",
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.106.0",
     "@tanstack/react-query": "^5.100.11",
     "clsx": "^2.1.1",
     "date-fns-jalali": "^4.1.0-0",

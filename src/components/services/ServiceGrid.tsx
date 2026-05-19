@@ -14,7 +14,7 @@ interface ServiceItem {
 
 const services: ServiceItem[] = [
   { icon: FileSearch, title: "پیگیری پروانه", description: "استعلام وضعیت پروانه برق", href: "/services#parvaneh" },
-  { icon: UserPlus, title: "ثبت‌نام پیمانکار", description: "ثبت‌نام و احراز صلاحیت", href: "/services#register" },
+  { icon: UserPlus, title: "ثبت‌نام کارشناس", description: "ثبت‌نام و احراز صلاحیت", href: "/services#register" },
   { icon: DollarSign, title: "استعلام تعرفه", description: "تعرفه‌های اجرای الکترود زمین", href: "/services#tariff" },
   { icon: Download, title: "دانلود فرم‌ها", description: "فرم‌های اجرایی و استاندارد", href: "/archive" },
   { icon: Zap, title: "مدیریت پروژه", description: "نظارت بر پروژه‌های برق", href: "/services#projects" },

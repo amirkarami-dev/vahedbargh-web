@@ -26,7 +26,7 @@ export default function ContactPage() {
           <div className="rounded-2xl border border-[var(--border)] overflow-hidden mb-8 h-64 bg-[var(--bg-raised)] flex items-center justify-center">
             <div className="text-center text-[var(--text-muted)]">
               <MapPin className="w-10 h-10 mx-auto mb-2 text-blue-400" />
-              <p className="text-sm">سنندج، خیابان پاسداران، ساختمان نظام مهندسی</p>
+              <p className="text-sm">سنندج، میدان کوهنورد، ساختمان نظام مهندسی</p>
             </div>
           </div>
 
@@ -94,7 +94,7 @@ export default function ContactPage() {
                     <div>
                       <p className="text-xs text-[var(--text-muted)] mb-0.5">آدرس</p>
                       <p className="text-sm text-[var(--text-secondary)]">
-                        سنندج، خیابان پاسداران، ساختمان سازمان نظام مهندسی ساختمان استان کردستان
+                        سنندج، میدان کوهنورد، ساختمان سازمان نظام مهندسی ساختمان استان کردستان
                       </p>
                     </div>
                   </li>

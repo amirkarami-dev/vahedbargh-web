@@ -9,6 +9,7 @@ export const NAV_ITEMS = [
   { label: "جلسات", href: "/meetings" },
   { label: "آرشیو", href: "/archive" },
   { label: "خدمات", href: "/services" },
+  { label: "فرآیندها", href: "/processes" },
   { label: "درباره ما", href: "/about" },
   { label: "تماس با ما", href: "/contact" },
 ];

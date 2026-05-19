@@ -45,7 +45,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-[var(--text-secondary)]">
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 mt-0.5 text-blue-500 shrink-0" />
-                <span>سنندج، خیابان پاسداران، ساختمان نظام مهندسی</span>
+                <span>سنندج، میدان کوهنورد، ساختمان نظام مهندسی</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-blue-500 shrink-0" />

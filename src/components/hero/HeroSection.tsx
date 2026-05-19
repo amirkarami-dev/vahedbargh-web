@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { ChevronDown, Zap, LogIn, Bell } from "lucide-react";
+import { ChevronDown, LogIn, Bell } from "lucide-react";
 import { CircuitBackground } from "./CircuitBackground";
 import { HeroStats } from "./HeroStats";
 
@@ -46,8 +47,15 @@ export function HeroSection() {
         >
           {/* Emblem */}
           <motion.div variants={item}>
-            <div className="w-20 h-20 rounded-2xl bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-600/40 animate-float">
-              <Zap className="w-10 h-10 text-white" />
+            <div className="w-24 h-24 rounded-2xl bg-white flex items-center justify-center shadow-2xl shadow-blue-600/30 animate-float overflow-hidden p-1">
+              <Image
+                src="/logo.png"
+                alt="سازمان نظام مهندسی ساختمان استان کردستان"
+                width={88}
+                height={88}
+                className="object-contain"
+                priority
+              />
             </div>
           </motion.div>
 
