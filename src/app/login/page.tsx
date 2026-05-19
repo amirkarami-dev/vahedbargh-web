@@ -10,8 +10,7 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0B1120] via-[#0f1b35] to-[#0B1120] dark:block hidden" />
-      <div className="absolute inset-0 bg-gradient-to-br from-[#EBF2FF] via-[#F0F4FA] to-[#EBF2FF] dark:hidden" />
+      <div className="absolute inset-0" style={{ background: "var(--page-hero-gradient)" }} />
 
       {/* Glow */}
       <div className="absolute inset-0 pointer-events-none">

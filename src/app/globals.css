@@ -34,6 +34,9 @@
     --card-foreground: var(--text-primary);
     --border-color: var(--border);
     --radius: 0.75rem;
+
+    /* Hero / page gradient (light) */
+    --page-hero-gradient: linear-gradient(to bottom, #EBF2FF, #F0F4FA, #EBF2FF);
   }
 
   .dark {
@@ -53,6 +56,9 @@
     --foreground: var(--text-primary);
     --card: var(--bg-elevated);
     --card-foreground: var(--text-primary);
+
+    /* Hero / page gradient (dark) */
+    --page-hero-gradient: linear-gradient(to bottom, #0B1120, #0f1b35, #0B1120);
   }
 }
 

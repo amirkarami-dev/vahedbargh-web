@@ -27,8 +27,7 @@ export function HeroSection() {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
       {/* Gradient bg */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0B1120] via-[#0f1b35] to-[#0B1120] dark:block hidden" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#EBF2FF] via-[#F0F4FA] to-[#EBF2FF] dark:hidden" />
+      <div className="absolute inset-0" style={{ background: "var(--page-hero-gradient)" }} />
 
       {/* Glow effects */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-blue-600/10 rounded-full blur-[100px] pointer-events-none" />
