@@ -1,7 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { documents } from "@/data/documents";
-import { mockDocumentService } from "@/services";
+import { getDocumentService } from "@/services";
 import { formatJalaliDate } from "@/lib/jalali";
 import { FileText, Download } from "lucide-react";
 import Link from "next/link";
@@ -19,7 +18,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CategoryArchivePage({ params }: Props) {
   const { category } = await params;
   const decoded = decodeURIComponent(category);
-  const docs = await mockDocumentService.getByCategory(decoded);
+  const documentService = await getDocumentService();
+  const docs = await documentService.getByCategory(decoded);
 
   return (
     <>
