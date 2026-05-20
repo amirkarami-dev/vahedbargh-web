@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { mockMeetingService } from "@/services";
+import { getMeetingService } from "@/services";
 
 export async function GET() {
-  const data = await mockMeetingService.getAll();
+  const service = await getMeetingService();
+  const data = await service.getAll();
   return NextResponse.json(data);
 }

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, FileText, Calendar, Users } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { mockMeetingService } from "@/services";
+import { getMeetingService } from "@/services";
 import { MEETING_STATUS_COLORS } from "@/lib/constants";
 import { formatJalaliDate } from "@/lib/jalali";
 import { toPersianNumber } from "@/lib/persian-numbers";
@@ -15,13 +15,15 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const meeting = await mockMeetingService.getById(id);
+  const meetingService = await getMeetingService();
+  const meeting = await meetingService.getById(id);
   return { title: meeting ? `جلسه شماره ${meeting.sessionNumber}` : "جلسه" };
 }
 
 export default async function MeetingDetailPage({ params }: Props) {
   const { id } = await params;
-  const meeting = await mockMeetingService.getById(id);
+  const meetingService = await getMeetingService();
+  const meeting = await meetingService.getById(id);
 
   if (!meeting) notFound();
 

@@ -6,13 +6,19 @@ import { ServiceGrid } from "@/components/services/ServiceGrid";
 import { StatsCounter } from "@/components/stats/StatsCounter";
 import { AnnouncementCard } from "@/components/announcements/AnnouncementCard";
 import { MeetingTimeline } from "@/components/meetings/MeetingTimeline";
-import { mockAnnouncementService, mockMeetingService } from "@/services";
+import { getAnnouncementService, getMeetingService } from "@/services";
 import { ArrowLeft } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
+  const [announcementService, meetingService] = await Promise.all([
+    getAnnouncementService(),
+    getMeetingService(),
+  ]);
   const [latestAnnouncements, latestMeetings] = await Promise.all([
-    mockAnnouncementService.getLatest(4),
-    mockMeetingService.getLatest(5),
+    announcementService.getLatest(4),
+    meetingService.getLatest(5),
   ]);
 
   const featured = latestAnnouncements.find((a) => a.featured) ?? latestAnnouncements[0];

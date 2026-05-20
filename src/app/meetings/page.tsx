@@ -1,7 +1,9 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MeetingTimeline } from "@/components/meetings/MeetingTimeline";
-import { mockMeetingService } from "@/services";
+import { getMeetingService } from "@/services";
+
+export const dynamic = "force-dynamic";
 import { MEETING_STATUS_COLORS } from "@/lib/constants";
 import type { Metadata } from "next";
 
@@ -10,7 +12,8 @@ export const metadata: Metadata = {
 };
 
 export default async function MeetingsPage() {
-  const meetings = await mockMeetingService.getAll();
+  const meetingService = await getMeetingService();
+  const meetings = await meetingService.getAll();
 
   const statusCounts = meetings.reduce<Record<string, number>>((acc, m) => {
     acc[m.status] = (acc[m.status] ?? 0) + 1;

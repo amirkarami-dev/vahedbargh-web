@@ -4,7 +4,7 @@ import { ArrowRight, Calendar, Tag } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Badge } from "@/components/ui/badge";
-import { mockAnnouncementService } from "@/services";
+import { getAnnouncementService } from "@/services";
 import { formatJalaliDate } from "@/lib/jalali";
 import type { Metadata } from "next";
 import type { AnnouncementPriority } from "@/types";
@@ -21,13 +21,15 @@ const priorityLabel: Record<AnnouncementPriority, string> = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const ann = await mockAnnouncementService.getById(slug);
+  const announcementService = await getAnnouncementService();
+  const ann = await announcementService.getById(slug);
   return { title: ann?.title ?? "اطلاعیه" };
 }
 
 export default async function AnnouncementDetailPage({ params }: Props) {
   const { slug } = await params;
-  const ann = await mockAnnouncementService.getById(slug);
+  const announcementService = await getAnnouncementService();
+  const ann = await announcementService.getById(slug);
 
   if (!ann) notFound();
 
