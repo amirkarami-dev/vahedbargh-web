@@ -61,6 +61,14 @@
     --border-color: var(--border);
     --radius: 0.75rem;
 
+    /* Admin / UI component tokens */
+    --accent-primary:  #2563EB;
+    --accent-secondary: #3B82F6;
+    --bg-primary:   #F0F4FA;
+    --bg-card:      #FFFFFF;
+    --bg-secondary: #F1F5FB;
+    --border-primary: rgba(37, 99, 235, 0.18);
+
     /* Hero / page gradient (light) */
     --page-hero-gradient: linear-gradient(to bottom, #EBF2FF, #F0F4FA, #EBF2FF);
   }
@@ -82,6 +90,14 @@
     --foreground: var(--text-primary);
     --card: var(--bg-elevated);
     --card-foreground: var(--text-primary);
+
+    /* Admin / UI component tokens */
+    --accent-primary:  #3B82F6;
+    --accent-secondary: #60A5FA;
+    --bg-primary:   #0B1120;
+    --bg-card:      #111827;
+    --bg-secondary: #1C2A3F;
+    --border-primary: rgba(37, 99, 235, 0.2);
 
     /* Hero / page gradient (dark) */
     --page-hero-gradient: linear-gradient(to bottom, #0B1120, #0f1b35, #0B1120);

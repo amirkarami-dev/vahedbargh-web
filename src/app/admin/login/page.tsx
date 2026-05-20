@@ -3,8 +3,9 @@
 import { Suspense, useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import { loginAction } from "./actions";
-import { Eye, EyeOff, Zap, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 
 function AdminLoginForm() {
   const searchParams = useSearchParams();
@@ -18,10 +19,10 @@ function AdminLoginForm() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-500 mb-4 shadow-lg">
-            <Zap className="w-8 h-8 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white mb-4 shadow-lg overflow-hidden border border-blue-100">
+            <Image src="/logo.png" alt="KURDNEZAM" width={64} height={64} className="object-contain" />
           </div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">پنل مدیریت SEBNB</h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">پنل مدیریت KURDNEZAM</h1>
           <p className="text-[var(--text-muted)] mt-1 text-sm">ورود به سامانه مدیریت محتوا</p>
         </div>
 
