@@ -41,7 +41,7 @@ export default function AdminSidebar() {
             <Zap className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="text-sm font-bold text-[var(--text-primary)]">SEBNB</p>
+            <p className="text-sm font-bold text-[var(--text-primary)]">KURDNEZAM</p>
             <p className="text-xs text-[var(--text-muted)]">پنل مدیریت</p>
           </div>
         </Link>

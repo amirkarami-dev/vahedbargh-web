@@ -1,6 +1,6 @@
 import AdminSidebar from "@/components/admin/AdminSidebar";
 
-export const metadata = { title: "پنل مدیریت | SEBNB" };
+export const metadata = { title: "پنل مدیریت | KURDNEZAM" };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
