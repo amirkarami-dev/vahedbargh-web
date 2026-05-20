@@ -1,8 +1,9 @@
 # deploy.ps1 — Build locally, upload artifacts, deploy on server
-# Usage: .\scripts\deploy.ps1 -Host 1.2.3.4 -User ubuntu
+# Usage: .\scripts\deploy.ps1                        (uses defaults below)
+#        .\scripts\deploy.ps1 -Host 1.2.3.4 -User ubuntu
 
 param(
-    [Parameter(Mandatory)][string]$Host,
+    [string]$Host       = "185.206.94.116",   # new server (demo.kurdnezambargh.ir)
     [string]$User       = "ubuntu",
     [string]$DeployPath = "/opt/vahedbargh-web",
     [string]$KeyFile    = ""          # optional: path to SSH private key
@@ -58,18 +59,12 @@ Write-Host "  deploy.zip created ($Size MB)"
 
 # ── 3. Upload ────────────────────────────────────────────────────────────────
 Step "[3/4] Uploading to $Server:$DeployPath"
-SSH "mkdir -p $DeployPath"
-scp @SshOpts deploy.zip "${Server}:${DeployPath}/deploy.zip"
+SSH "sudo mkdir -p $DeployPath && sudo chown ubuntu:ubuntu $DeployPath"
+& "C:\Program Files\PuTTY\pscp.exe" -pw "P@33word@1234" -batch deploy.zip "${Server}:${DeployPath}/deploy.zip"
 Remove-Item deploy.zip
 
 # ── 4. Deploy ────────────────────────────────────────────────────────────────
 Step "[4/4] Deploying on server"
-SSH @"
-set -e
-cd $DeployPath
-unzip -o deploy.zip
-rm deploy.zip
-docker compose up -d --build
-"@
+SSH "python3 -c ""import zipfile; zipfile.ZipFile('$DeployPath/deploy.zip').extractall('$DeployPath/')"" && rm $DeployPath/deploy.zip && cd $DeployPath && docker compose up -d --build"
 
 Step "Done! App is live at https://kurdnezambargh2.ir"

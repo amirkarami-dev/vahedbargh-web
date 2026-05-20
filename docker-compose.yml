@@ -10,7 +10,7 @@ services:
       - NODE_ENV=production
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.vahedbargh-web.rule=Host(`kurdnezambargh2.ir`)"
+      - "traefik.http.routers.vahedbargh-web.rule=Host(`demo.kurdnezambargh.ir`)"
       - "traefik.http.routers.vahedbargh-web.entrypoints=websecure"
       - "traefik.http.routers.vahedbargh-web.tls.certresolver=myresolver"
       - "traefik.http.services.vahedbargh-web.loadbalancer.server.port=80"
