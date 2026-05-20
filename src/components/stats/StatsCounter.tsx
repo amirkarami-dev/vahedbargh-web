@@ -1,16 +1,20 @@
 "use client";
-import { FileCheck, Users, Activity, ShieldCheck, type LucideIcon } from "lucide-react";
+import { FileCheck, Users, Activity, ShieldCheck, TrendingUp, Award, Building2, ClipboardCheck, type LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "@/hooks/useInView";
 import { useCounter } from "@/hooks/useCounter";
-import { stats } from "@/data/stats";
 import { toPersianNumber } from "@/lib/persian-numbers";
+import type { StatItem } from "@/types";
 
 const iconMap: Record<string, LucideIcon> = {
   FileCheck,
   Users,
   Activity,
   ShieldCheck,
+  TrendingUp,
+  Award,
+  Building2,
+  ClipboardCheck,
 };
 
 function CounterItem({
@@ -29,7 +33,7 @@ function CounterItem({
   active: boolean;
 }) {
   const count = useCounter(value, 2500, active);
-  const Icon = iconMap[iconName];
+  const Icon = iconMap[iconName] ?? FileCheck;
 
   return (
     <motion.div
@@ -40,7 +44,7 @@ function CounterItem({
       className="text-center p-6"
     >
       <div className="w-14 h-14 rounded-2xl bg-blue-600/15 border border-blue-600/20 flex items-center justify-center mx-auto mb-4">
-        {Icon && <Icon className="w-7 h-7 text-blue-400" />}
+        <Icon className="w-7 h-7 text-blue-400" />
       </div>
       <div className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)] mb-1 tabular-nums">
         {toPersianNumber(count.toLocaleString("en-US"))}{suffix}
@@ -50,7 +54,7 @@ function CounterItem({
   );
 }
 
-export function StatsCounter() {
+export function StatsCounter({ stats }: { stats: StatItem[] }) {
   const [ref, inView] = useInView<HTMLDivElement>();
 
   return (
@@ -63,7 +67,7 @@ export function StatsCounter() {
         <div ref={ref} className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-x-reverse divide-[var(--border)]">
           {stats.map((stat, i) => (
             <CounterItem
-              key={stat.label}
+              key={stat.id}
               value={stat.value}
               label={stat.label}
               suffix={stat.suffix}

@@ -12,6 +12,7 @@ import {
   LogOut,
   Zap,
   ChevronLeft,
+  BarChart3,
 } from "lucide-react";
 
 const navItems = [
@@ -19,6 +20,7 @@ const navItems = [
   { href: "/admin/announcements", label: "اطلاعیه‌ها", icon: Megaphone },
   { href: "/admin/meetings", label: "جلسات", icon: Users },
   { href: "/admin/documents", label: "اسناد", icon: FileText },
+  { href: "/admin/stats", label: "آمار سایت", icon: BarChart3 },
   { href: "/admin/settings", label: "تنظیمات", icon: Settings },
 ];
 

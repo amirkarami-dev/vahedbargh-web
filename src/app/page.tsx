@@ -6,19 +6,21 @@ import { ServiceGrid } from "@/components/services/ServiceGrid";
 import { StatsCounter } from "@/components/stats/StatsCounter";
 import { AnnouncementCard } from "@/components/announcements/AnnouncementCard";
 import { MeetingTimeline } from "@/components/meetings/MeetingTimeline";
-import { getAnnouncementService, getMeetingService } from "@/services";
+import { getAnnouncementService, getMeetingService, getStatsService } from "@/services";
 import { ArrowLeft } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [announcementService, meetingService] = await Promise.all([
+  const [announcementService, meetingService, statsService] = await Promise.all([
     getAnnouncementService(),
     getMeetingService(),
+    getStatsService(),
   ]);
-  const [latestAnnouncements, latestMeetings] = await Promise.all([
+  const [latestAnnouncements, latestMeetings, stats] = await Promise.all([
     announcementService.getLatest(4),
     meetingService.getLatest(5),
+    statsService.getAll(),
   ]);
 
   const featured = latestAnnouncements.find((a) => a.featured) ?? latestAnnouncements[0];
@@ -28,9 +30,9 @@ export default async function HomePage() {
     <>
       <Header />
       <main id="main-content">
-        <HeroSection />
+        <HeroSection stats={stats} />
         <ServiceGrid />
-        <StatsCounter />
+        <StatsCounter stats={stats} />
 
         {/* Announcements Preview */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16">

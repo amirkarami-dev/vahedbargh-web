@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ChevronDown, LogIn, Bell } from "lucide-react";
 import { CircuitBackground } from "./CircuitBackground";
 import { HeroStats } from "./HeroStats";
+import type { StatItem } from "@/types";
 
 const container = {
   hidden: { opacity: 0 },
@@ -23,7 +24,7 @@ const item = {
   },
 };
 
-export function HeroSection() {
+export function HeroSection({ stats }: { stats: StatItem[] }) {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
       {/* Gradient bg */}
@@ -104,7 +105,7 @@ export function HeroSection() {
 
           {/* Stats */}
           <motion.div variants={item} className="w-full">
-            <HeroStats />
+            <HeroStats stats={stats} />
           </motion.div>
         </motion.div>
       </div>

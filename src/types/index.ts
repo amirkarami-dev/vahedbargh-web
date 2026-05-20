@@ -3,10 +3,12 @@ export * from "./meeting";
 export * from "./document";
 
 export interface StatItem {
-  value: number;
+  id: string;
   label: string;
+  value: number;
   suffix: string;
-  icon: string;
+  iconName: string;
+  sortOrder: number;
 }
 
 export interface ServiceItem {
