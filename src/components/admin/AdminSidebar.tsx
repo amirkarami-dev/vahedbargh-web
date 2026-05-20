@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { logoutAction } from "@/app/admin/logout/actions";
 import {
@@ -10,7 +11,7 @@ import {
   FileText,
   Settings,
   LogOut,
-  Zap,
+  Globe,
   ChevronLeft,
   BarChart3,
 } from "lucide-react";
@@ -37,8 +38,8 @@ export default function AdminSidebar() {
       {/* Logo */}
       <div className="p-6 border-b border-[var(--border-primary)]">
         <Link href="/admin" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] flex items-center justify-center flex-shrink-0">
-            <Zap className="w-5 h-5 text-white" />
+          <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center flex-shrink-0 overflow-hidden shadow-sm border border-[var(--border-primary)]">
+            <Image src="/logo.png" alt="KURDNEZAM" width={36} height={36} className="object-contain" />
           </div>
           <div>
             <p className="text-sm font-bold text-[var(--text-primary)]">KURDNEZAM</p>
@@ -76,7 +77,7 @@ export default function AdminSidebar() {
           className="flex items-center gap-3 px-4 py-2 rounded-xl text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-all mb-1"
           target="_blank"
         >
-          <Zap className="w-4 h-4" />
+          <Globe className="w-4 h-4" />
           <span>مشاهده سایت</span>
         </Link>
         <form action={logoutAction}>
