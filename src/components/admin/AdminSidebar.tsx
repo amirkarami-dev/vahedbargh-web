@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase";
+import { usePathname } from "next/navigation";
+import { logoutAction } from "@/app/admin/logout/actions";
 import {
   LayoutDashboard,
   Megaphone,
@@ -24,14 +24,6 @@ const navItems = [
 
 export default function AdminSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-
-  async function handleLogout() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/admin/login");
-    router.refresh();
-  }
 
   function isActive(href: string, exact?: boolean) {
     if (exact) return pathname === href;
@@ -85,13 +77,15 @@ export default function AdminSidebar() {
           <Zap className="w-4 h-4" />
           <span>مشاهده سایت</span>
         </Link>
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all"
-        >
-          <LogOut className="w-4 h-4" />
-          <span>خروج از حساب</span>
-        </button>
+        <form action={logoutAction}>
+          <button
+            type="submit"
+            className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>خروج از حساب</span>
+          </button>
+        </form>
       </div>
     </aside>
   );
