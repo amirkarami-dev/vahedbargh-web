@@ -1,5 +1,31 @@
 @import "tailwindcss";
 
+/* ── IranSans (main Persian font) ──────────────────────────────────────── */
+@font-face {
+  font-family: 'IranSans';
+  src: url('/fonts/iransans.eot');
+  src: url('/fonts/iransans.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/iransans.woff2')       format('woff2'),
+       url('/fonts/iransans.woff')        format('woff'),
+       url('/fonts/iransans.ttf')         format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── IranSansNumbers (Persian-digit variant, used first in the stack) ── */
+@font-face {
+  font-family: 'IranSansNumbers';
+  src: url('/fonts/iransansnumbers.eot');
+  src: url('/fonts/iransansnumbers.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/iransansnumbers.woff2')       format('woff2'),
+       url('/fonts/iransansnumbers.woff')        format('woff'),
+       url('/fonts/iransansnumbers.ttf')         format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     /* Core */
@@ -65,8 +91,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: 'Vazirmatn', sans-serif;
-  --font-display: 'Estedad', 'Vazirmatn', sans-serif;
+  --font-sans: 'IranSansNumbers', 'IranSans', sans-serif;
+  --font-display: 'IranSansNumbers', 'IranSans', sans-serif;
 }
 
 @layer base {
@@ -81,14 +107,13 @@
   body {
     background-color: var(--bg-base);
     color: var(--text-primary);
-    font-family: 'Vazirmatn', sans-serif;
-    font-feature-settings: "ss01", "ss02";
+    font-family: 'IranSansNumbers', 'IranSans', sans-serif;
     line-height: 1.8;
     direction: rtl;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Estedad', 'Vazirmatn', sans-serif;
+    font-family: 'IranSansNumbers', 'IranSans', sans-serif;
     font-weight: 800;
     letter-spacing: -0.02em;
     line-height: 1.2;
@@ -101,7 +126,7 @@
   }
 
   input, textarea, select {
-    font-family: 'Vazirmatn', sans-serif;
+    font-family: 'IranSansNumbers', 'IranSans', sans-serif;
   }
 
   :focus-visible {

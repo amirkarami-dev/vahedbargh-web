@@ -1,0 +1,20 @@
+@font-face {
+    font-family: 'IranSans';
+    font-weight: normal;
+    font-style: normal;
+    src: url("/assets/fonts/iransans/iransans.eot");
+    src: url('/assets/fonts/iransans/iransans.eot#iefix') format('embedded-opentype'),
+    url('/assets/fonts/iransans/iransans.ttf')  format('truetype'),
+    url('/assets/fonts/iransans/iransans.woff') format('woff'),
+    url('/assets/fonts/iransans/iransans.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'IranSansNumbers';
+    font-weight: normal;
+    font-style: normal;
+    src: url('/assets/fonts/iransans/iransansnumbers.eot');
+    src: url('/assets/fonts/iransans/iransansnumbers.eot#iefix') format('embedded-opentype'),
+    url('/assets/fonts/iransans/iransansnumbers.ttf')  format('truetype'),
+    url('/assets/fonts/iransans/iransansnumbers.woff') format('woff'),
+    url('/assets/fonts/iransans/iransansnumbers.woff2') format('woff2');
+}

@@ -24,17 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://cdn.fontcdn.ir" />
-        <link
-          href="https://cdn.fontcdn.ir/Font/Persian/Vazirmatn/Vazirmatn.css"
-          rel="stylesheet"
-        />
-        <link
-          href="https://cdn.fontcdn.ir/Font/Persian/Estedad/Estedad.css"
-          rel="stylesheet"
-        />
-      </head>
+      <head />
       <body className="min-h-screen flex flex-col antialiased">
         <a
           href="#main-content"
