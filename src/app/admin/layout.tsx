@@ -1,4 +1,4 @@
-import AdminSidebar from "@/components/admin/AdminSidebar";
+import AdminShell from "@/components/admin/AdminShell";
 import { requireAuth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
@@ -11,7 +11,7 @@ export default async function AdminLayout({
 }) {
   // Middleware already redirects unauthenticated users, but we add a
   // server-component guard here as a defence-in-depth fallback.
-  let profile: { first_name: string | null; last_name: string | null; avatar_url: string | null } | null = null;
+  let profileName: string | null = null;
 
   try {
     const { user, supabase } = await requireAuth();
@@ -22,19 +22,12 @@ export default async function AdminLayout({
       .eq("id", user.id)
       .single();
 
-    profile = data ?? null;
+    profileName = data?.first_name ?? null;
   } catch {
     // requireAuth() calls redirect() internally when there is no session,
     // so this catch only fires for unexpected errors — redirect to login.
     redirect("/admin/login");
   }
 
-  return (
-    <div className="flex min-h-screen bg-[var(--bg-primary)]" dir="rtl">
-      <AdminSidebar />
-      <div className="flex-1 flex flex-col overflow-auto">
-        <main className="flex-1">{children}</main>
-      </div>
-    </div>
-  );
+  return <AdminShell profileName={profileName}>{children}</AdminShell>;
 }
