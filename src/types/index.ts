@@ -1,6 +1,13 @@
 export * from "./announcement";
 export * from "./meeting";
 export * from "./document";
+export * from "./enums";
+export * from "./geo";
+export * from "./user";
+export * from "./engineer";
+export * from "./project";
+export * from "./accounting";
+export * from "./support";
 
 export interface StatItem {
   id: string;
