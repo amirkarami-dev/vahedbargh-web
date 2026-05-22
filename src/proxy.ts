@@ -39,24 +39,43 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isLoginPage = pathname === "/admin/login";
+  // ── /admin/* routes ────────────────────────────────────────────────────────
+  const isAdminLoginPage = pathname === "/admin/login";
 
-  if (!user && !isLoginPage) {
-    // Not authenticated — redirect to login with ?redirect= so the login page
-    // can bounce the user back after successful sign-in.
-    const loginUrl = new URL("/admin/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
+  if (pathname.startsWith("/admin")) {
+    if (!user && !isAdminLoginPage) {
+      const loginUrl = new URL("/admin/login", request.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (user && isAdminLoginPage) {
+      return NextResponse.redirect(new URL("/admin", request.url));
+    }
+
+    return supabaseResponse;
   }
 
-  if (user && isLoginPage) {
-    // Already authenticated — skip the login page.
-    return NextResponse.redirect(new URL("/admin", request.url));
+  // ── /app/* routes ──────────────────────────────────────────────────────────
+  const isAppLoginPage = pathname === "/app/login";
+
+  if (pathname.startsWith("/app")) {
+    if (!user && !isAppLoginPage) {
+      const loginUrl = new URL("/app/login", request.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (user && isAppLoginPage) {
+      return NextResponse.redirect(new URL("/app", request.url));
+    }
+
+    return supabaseResponse;
   }
 
   return supabaseResponse;
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/app/:path*"],
 };
