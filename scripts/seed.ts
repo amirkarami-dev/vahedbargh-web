@@ -1,11 +1,14 @@
 /**
  * One-time seed script: insert all mock data into production Supabase.
  * Run with:  npx tsx scripts/seed.ts
+ *
+ * Requires migration 00015_content_tables.sql to have been applied first.
  */
 import { createClient } from "@supabase/supabase-js";
 import { announcements } from "../src/data/announcements";
 import { meetings } from "../src/data/meetings";
 import { documents } from "../src/data/documents";
+import { stats } from "../src/data/stats";
 
 const SUPABASE_URL = "https://supabase.kurdnezambargh.ir";
 const SERVICE_KEY =
@@ -65,6 +68,19 @@ async function seed() {
   );
   if (docErr) console.error("  ✗ documents:", docErr.message);
   else console.log(`  ✓ ${documents.length} documents inserted`);
+
+  console.log("Seeding stats…");
+  const { error: statsErr } = await supabase.from("stats").insert(
+    stats.map((s, i) => ({
+      label: s.label,
+      value: s.value,
+      suffix: s.suffix,
+      icon_name: s.iconName,
+      sort_order: i,
+    }))
+  );
+  if (statsErr) console.error("  ✗ stats:", statsErr.message);
+  else console.log(`  ✓ ${stats.length} stats inserted`);
 
   console.log("\nDone.");
 }
