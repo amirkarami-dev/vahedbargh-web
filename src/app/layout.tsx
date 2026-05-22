@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/features/theme/ThemeProvider";
 import { ToastProvider } from "@/components/ui/toast-provider";
+import { QueryProvider } from "@/components/providers/QueryProvider";
 import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
@@ -46,10 +47,12 @@ export default function RootLayout({
           shadow="0 0 10px #3B82F6, 0 0 5px #3B82F6"
           zIndex={9999}
         />
-        <ThemeProvider>
-          <ToastProvider />
-          {children}
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider>
+            <ToastProvider />
+            {children}
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
