@@ -28,7 +28,7 @@ export default async function AppProfilePage() {
     } = await supabase.auth.getUser();
 
     if (!authUser) {
-      redirect("/app/login");
+      redirect("/login");
     }
     user = authUser;
 
@@ -48,7 +48,7 @@ export default async function AppProfilePage() {
     profile = profileRes.data ?? null;
     role = roleRes.data?.role ?? null;
   } catch {
-    if (!user) redirect("/app/login");
+    if (!user) redirect("/login");
   }
 
   const firstName =

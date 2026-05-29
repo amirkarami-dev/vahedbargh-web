@@ -39,3 +39,25 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local one-off dev/migration scripts (contain server & DB credentials — do NOT commit)
+/scripts/apply-migrations.ts
+/scripts/check-migrations.ts
+/scripts/check-seed.ts
+/scripts/combined-migrations.sql
+/scripts/create-test-user.ts
+/scripts/debug-tables.ts
+/scripts/discover-tables.mjs
+/scripts/fix-user-roles.ts
+/scripts/migrate-data.mjs
+/scripts/migrate-users.mjs
+/scripts/ssh-docker-tasks.py
+/scripts/test-db-connection.ts
+
+# local supabase working state / scratch
+/supabase/.branches/
+/supabase/.temp/
+/supabase/snippets/
+
+# claude worktrees
+.claude/worktrees/

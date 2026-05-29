@@ -12,7 +12,7 @@
 -- ════════════════════════════════════════════════════════════════════
 -- announcements
 -- ════════════════════════════════════════════════════════════════════
-CREATE TABLE announcements (
+CREATE TABLE IF NOT EXISTS announcements (
   id           uuid        PRIMARY KEY DEFAULT uuid_generate_v4(),
   slug         text        UNIQUE NOT NULL,
   title        text        NOT NULL,
@@ -28,9 +28,9 @@ CREATE TABLE announcements (
   updated_at   timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_announcements_priority    ON announcements (priority);
-CREATE INDEX idx_announcements_featured    ON announcements (featured);
-CREATE INDEX idx_announcements_published_at ON announcements (published_at DESC);
+CREATE INDEX IF NOT EXISTS idx_announcements_priority    ON announcements (priority);
+CREATE INDEX IF NOT EXISTS idx_announcements_featured    ON announcements (featured);
+CREATE INDEX IF NOT EXISTS idx_announcements_published_at ON announcements (published_at DESC);
 
 ALTER TABLE announcements ENABLE ROW LEVEL SECURITY;
 
@@ -47,13 +47,13 @@ CREATE POLICY "announcements_auth_write"
 -- ════════════════════════════════════════════════════════════════════
 -- meetings
 -- ════════════════════════════════════════════════════════════════════
-CREATE TABLE meetings (
+CREATE TABLE IF NOT EXISTS meetings (
   id             uuid        PRIMARY KEY DEFAULT uuid_generate_v4(),
   session_number integer     NOT NULL,
   subject        text        NOT NULL,
   jalali_date    text        NOT NULL DEFAULT '',
   status         text        NOT NULL DEFAULT 'برگزار شده'
-                             CHECK (status IN ('در دستور کار','برگزار شده','لغو شده')),
+                             CHECK (status IN ('در دستور کار','برگزار شده','لغو شده','مصوبه صادر شد','در حال پیگیری')),
   type           text        NOT NULL DEFAULT 'هیئت رئیسه'
                              CHECK (type IN ('هیئت رئیسه','کمیته فنی','کمیته آموزش','کمیته مالی')),
   pdf_url        text,
@@ -64,8 +64,8 @@ CREATE TABLE meetings (
   updated_at     timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_meetings_session_number ON meetings (session_number DESC);
-CREATE INDEX idx_meetings_status         ON meetings (status);
+CREATE INDEX IF NOT EXISTS idx_meetings_session_number ON meetings (session_number DESC);
+CREATE INDEX IF NOT EXISTS idx_meetings_status         ON meetings (status);
 
 ALTER TABLE meetings ENABLE ROW LEVEL SECURITY;
 
@@ -80,7 +80,7 @@ CREATE POLICY "meetings_auth_write"
 -- ════════════════════════════════════════════════════════════════════
 -- documents
 -- ════════════════════════════════════════════════════════════════════
-CREATE TABLE documents (
+CREATE TABLE IF NOT EXISTS documents (
   id             uuid        PRIMARY KEY DEFAULT uuid_generate_v4(),
   title          text        NOT NULL,
   category       text        NOT NULL DEFAULT 'فرم اجرایی',
@@ -96,9 +96,9 @@ CREATE TABLE documents (
   updated_at     timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_documents_category       ON documents (category);
-CREATE INDEX idx_documents_featured       ON documents (featured);
-CREATE INDEX idx_documents_download_count ON documents (download_count DESC);
+CREATE INDEX IF NOT EXISTS idx_documents_category       ON documents (category);
+CREATE INDEX IF NOT EXISTS idx_documents_featured       ON documents (featured);
+CREATE INDEX IF NOT EXISTS idx_documents_download_count ON documents (download_count DESC);
 
 ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
 
@@ -113,7 +113,7 @@ CREATE POLICY "documents_auth_write"
 -- ════════════════════════════════════════════════════════════════════
 -- stats  (homepage KPI counters)
 -- ════════════════════════════════════════════════════════════════════
-CREATE TABLE stats (
+CREATE TABLE IF NOT EXISTS stats (
   id         uuid        PRIMARY KEY DEFAULT uuid_generate_v4(),
   label      text        NOT NULL,
   value      integer     NOT NULL DEFAULT 0,
@@ -123,7 +123,7 @@ CREATE TABLE stats (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_stats_sort_order ON stats (sort_order ASC);
+CREATE INDEX IF NOT EXISTS idx_stats_sort_order ON stats (sort_order ASC);
 
 ALTER TABLE stats ENABLE ROW LEVEL SECURITY;
 
@@ -138,7 +138,7 @@ CREATE POLICY "stats_auth_write"
 -- ════════════════════════════════════════════════════════════════════
 -- site_settings  (admin-only, no RLS — accessed via service role key)
 -- ════════════════════════════════════════════════════════════════════
-CREATE TABLE site_settings (
+CREATE TABLE IF NOT EXISTS site_settings (
   key        text        PRIMARY KEY,
   value      text        NOT NULL DEFAULT '',
   updated_at timestamptz NOT NULL DEFAULT now()
@@ -152,22 +152,27 @@ CREATE OR REPLACE FUNCTION set_updated_at_content()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
 BEGIN NEW.updated_at = now(); RETURN NEW; END; $$;
 
+DROP TRIGGER IF EXISTS trg_announcements_updated_at ON announcements;
 CREATE TRIGGER trg_announcements_updated_at
   BEFORE UPDATE ON announcements
   FOR EACH ROW EXECUTE FUNCTION set_updated_at_content();
 
+DROP TRIGGER IF EXISTS trg_meetings_updated_at ON meetings;
 CREATE TRIGGER trg_meetings_updated_at
   BEFORE UPDATE ON meetings
   FOR EACH ROW EXECUTE FUNCTION set_updated_at_content();
 
+DROP TRIGGER IF EXISTS trg_documents_updated_at ON documents;
 CREATE TRIGGER trg_documents_updated_at
   BEFORE UPDATE ON documents
   FOR EACH ROW EXECUTE FUNCTION set_updated_at_content();
 
+DROP TRIGGER IF EXISTS trg_stats_updated_at ON stats;
 CREATE TRIGGER trg_stats_updated_at
   BEFORE UPDATE ON stats
   FOR EACH ROW EXECUTE FUNCTION set_updated_at_content();
 
+DROP TRIGGER IF EXISTS trg_site_settings_updated_at ON site_settings;
 CREATE TRIGGER trg_site_settings_updated_at
   BEFORE UPDATE ON site_settings
   FOR EACH ROW EXECUTE FUNCTION set_updated_at_content();
@@ -180,4 +185,5 @@ INSERT INTO site_settings (key, value) VALUES
   ('contact_address',  'سنندج، خیابان پاسداران، سازمان نظام مهندسی ساختمان کردستان'),
   ('footer_text',      'تمامی حقوق محفوظ است © سازمان نظام مهندسی ساختمان کردستان'),
   ('hero_title',       'دفتر اجرایی نظارت برق'),
-  ('hero_subtitle',    'نظارت بر تأسیسات برقی ساختمان‌های استان کردستان');
+  ('hero_subtitle',    'نظارت بر تأسیسات برقی ساختمان‌های استان کردستان')
+ON CONFLICT (key) DO NOTHING;

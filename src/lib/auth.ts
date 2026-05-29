@@ -15,7 +15,8 @@ export type Role =
   | "PanelMaker"
   | "ElectAdmin"
   | "Section"
-  | "Analyzer";
+  | "Analyzer"
+  | "AdminPanel";
 
 // ---------------------------------------------------------------------------
 // requireAuth — use in Server Components / Server Actions that need a user.
@@ -33,6 +34,33 @@ export async function requireAuth(): Promise<{
 
   if (error || !user) {
     redirect("/admin/login");
+  }
+
+  return { user, supabase };
+}
+
+// ---------------------------------------------------------------------------
+// requireAdminPanelRole — use in /admin Server Components & Server Actions.
+// Redirects to /admin/login (with ?error=forbidden) if the caller does not
+// hold the AdminPanel (or Administrator) role.
+// ---------------------------------------------------------------------------
+export async function requireAdminPanelRole(): Promise<{
+  user: User;
+  supabase: SupabaseClient;
+}> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    redirect("/admin/login");
+  }
+
+  const roles = await getUserRoles();
+  if (!hasRole(roles, "AdminPanel", "Administrator")) {
+    redirect("/admin/login?error=forbidden");
   }
 
   return { user, supabase };
@@ -82,6 +110,34 @@ export async function getUserRoles(): Promise<Role[]> {
     ) as Role[];
   } catch {
     return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// getClientId — reads the `cid` (tenant client_id) claim injected into the JWT
+// by the custom_access_token_hook. Required for inserts into tenant-scoped
+// tables (e.g. transactions, elect_projects) whose client_id is NOT NULL and
+// whose RLS WITH CHECK ties the row to the caller's tenant.
+// ---------------------------------------------------------------------------
+export async function getClientId(): Promise<string | null> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) return null;
+
+    const [, payloadB64] = session.access_token.split(".");
+    if (!payloadB64) return null;
+
+    const padding = "=".repeat((4 - (payloadB64.length % 4)) % 4);
+    const json = atob(payloadB64.replace(/-/g, "+").replace(/_/g, "/") + padding);
+    const payload = JSON.parse(json) as { cid?: unknown };
+
+    return typeof payload.cid === "string" ? payload.cid : null;
+  } catch {
+    return null;
   }
 }
 

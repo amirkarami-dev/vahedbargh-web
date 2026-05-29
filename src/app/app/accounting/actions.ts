@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase-server";
-import { getUserRoles, hasRole } from "@/lib/auth";
+import { getUserRoles, hasRole, getClientId, getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import type { Transaction, Invoice, EngPaymentList } from "@/services/mock/accounting";
 
@@ -23,20 +23,6 @@ export async function fetchTransactions(filter?: {
   dateFrom?: string;
   dateTo?: string;
 }): Promise<Transaction[]> {
-  const USE_MOCK =
-    process.env.USE_MOCK_DATA === "true" ||
-    !process.env.NEXT_PUBLIC_SUPABASE_URL;
-
-  if (USE_MOCK) {
-    const { mockAccountingService } = await import("@/services/mock/accounting");
-    const all = await mockAccountingService.getTransactions(
-      filter?.transactionType !== undefined
-        ? { transactionType: filter.transactionType }
-        : undefined
-    );
-    return applyDateFilter(all, filter?.dateFrom, filter?.dateTo);
-  }
-
   try {
     const supabase = await createClient();
     let query = supabase
@@ -60,15 +46,6 @@ export async function fetchTransactions(filter?: {
 }
 
 export async function fetchInvoices(): Promise<Invoice[]> {
-  const USE_MOCK =
-    process.env.USE_MOCK_DATA === "true" ||
-    !process.env.NEXT_PUBLIC_SUPABASE_URL;
-
-  if (USE_MOCK) {
-    const { mockAccountingService } = await import("@/services/mock/accounting");
-    return mockAccountingService.getInvoices();
-  }
-
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -98,57 +75,6 @@ export interface EngPaymentSummary {
 }
 
 export async function fetchEngPaymentSummaries(): Promise<EngPaymentSummary[]> {
-  const USE_MOCK =
-    process.env.USE_MOCK_DATA === "true" ||
-    !process.env.NEXT_PUBLIC_SUPABASE_URL;
-
-  if (USE_MOCK) {
-    const [{ mockAccountingService }, { mockEngineersService }] =
-      await Promise.all([
-        import("@/services/mock/accounting"),
-        import("@/services/mock/engineers"),
-      ]);
-
-    const tasks = await mockAccountingService.getEngPaymentTasks();
-    const allPayments: EngPaymentList[] = [];
-    for (const task of tasks) {
-      const lists = await mockAccountingService.getEngPaymentLists(task.id);
-      allPayments.push(...lists);
-    }
-
-    const engineers = await mockEngineersService.getAll();
-    const engMap = new Map(engineers.map((e) => [e.id, e]));
-
-    const byEngineer = new Map<string, EngPaymentList[]>();
-    for (const p of allPayments) {
-      const existing = byEngineer.get(p.engineerId) ?? [];
-      existing.push(p);
-      byEngineer.set(p.engineerId, existing);
-    }
-
-    const summaries: EngPaymentSummary[] = [];
-    for (const [engId, payments] of byEngineer) {
-      const eng = engMap.get(engId);
-      const paid = payments.filter((p) => p.isApproved);
-      const pending = payments.filter((p) => !p.isApproved);
-      const totalOwed = payments.reduce((s, p) => s + p.sumAmountSystem, 0);
-      const totalPaid = paid.reduce((s, p) => s + p.sumAmountSystem, 0);
-
-      summaries.push({
-        engineerId: engId,
-        engineerName: eng?.fullName ?? "مهندس نامشخص",
-        bankAccount: eng?.bankAccountNumber,
-        projectCount: payments.length,
-        totalOwed,
-        totalPaid,
-        balance: totalOwed - totalPaid,
-        pendingItems: pending,
-      });
-    }
-
-    return summaries;
-  }
-
   try {
     const supabase = await createClient();
     const { data: payments, error: payErr } = await supabase
@@ -200,34 +126,6 @@ export async function fetchSummaryStats(): Promise<{
   totalInvoiced: number;
   engBalanceTotal: number;
 }> {
-  const USE_MOCK =
-    process.env.USE_MOCK_DATA === "true" ||
-    !process.env.NEXT_PUBLIC_SUPABASE_URL;
-
-  if (USE_MOCK) {
-    const { mockAccountingService } = await import("@/services/mock/accounting");
-    const [txs, invs] = await Promise.all([
-      mockAccountingService.getTransactions(),
-      mockAccountingService.getInvoices(),
-    ]);
-
-    const currentMonth = new Date().toLocaleDateString("fa-IR", {
-      year: "numeric",
-      month: "2-digit",
-    });
-
-    const monthlyTotal = txs
-      .filter((t) => t.solarCreated?.startsWith(currentMonth.slice(0, 7)))
-      .reduce((s, t) => s + t.amount, 0);
-
-    return {
-      monthlyTransactionTotal: monthlyTotal || txs.reduce((s, t) => s + t.amount, 0),
-      pendingPaymentsCount: invs.filter((i) => i.invoiceStatus === 0).length,
-      totalInvoiced: invs.reduce((s, i) => s + i.amount, 0),
-      engBalanceTotal: 0,
-    };
-  }
-
   try {
     const supabase = await createClient();
 
@@ -279,20 +177,6 @@ export interface ProjectOption {
 }
 
 export async function fetchProjectOptions(): Promise<ProjectOption[]> {
-  const USE_MOCK =
-    process.env.USE_MOCK_DATA === "true" ||
-    !process.env.NEXT_PUBLIC_SUPABASE_URL;
-
-  if (USE_MOCK) {
-    const { mockProjectsService } = await import("@/services/mock/projects");
-    const projects = await mockProjectsService.getAll();
-    return projects.map((p) => ({
-      id: p.id,
-      fileNumber: p.fileNumber ?? p.id,
-      landlordName: p.landlordName,
-    }));
-  }
-
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -348,53 +232,33 @@ export async function registerPayment(
     };
     const transactionType = transactionTypeMap[type] ?? 1;
 
-    const USE_MOCK =
-      process.env.USE_MOCK_DATA === "true" ||
-      !process.env.NEXT_PUBLIC_SUPABASE_URL;
-
-    if (USE_MOCK) {
-      const { mockAccountingService } = await import("@/services/mock/accounting");
-      await mockAccountingService.addTransaction({
-        clientId: "00000000-0000-0000-0000-000000000001",
-        electProjectId: projectId ?? undefined,
-        amount,
-        gatewayType: 0,
-        transactionType,
-        status: 2,
-        bankTransactionId: receiptNumber ?? undefined,
-        description: description ?? undefined,
-        solarCreated: jalaliDate ?? undefined,
-      });
-      revalidatePath("/app/accounting");
-      return { ok: true };
+    const clientId = await getClientId();
+    if (!clientId) {
+      return { ok: false, error: "شناسه مجموعه یافت نشد" };
     }
+    const user = await getCurrentUser();
+
+    // bank_transaction_id is a uuid FK, so a free-text receipt number is folded
+    // into the description rather than that column.
+    const fullDescription =
+      [description, receiptNumber ? `شماره فیش: ${receiptNumber}` : null]
+        .filter(Boolean)
+        .join(" — ") || null;
 
     const supabase = await createClient();
-    const { error } = await supabase.from("financial_transactions").insert({
-      project_id: projectId ?? null,
+    const { error } = await supabase.from("transactions").insert({
+      client_id: clientId,
+      user_id: user?.id ?? null,
+      elect_project_id: projectId || null,
       amount,
-      type,
-      description: description ?? null,
-      jalali_date: jalaliDate ?? null,
-      receipt_number: receiptNumber ?? null,
-      created_at: new Date().toISOString(),
+      gateway_type: 0,
+      transaction_type: transactionType,
+      status: 2,
+      description: fullDescription,
+      solar_created: jalaliDate || null,
+      updated_at: new Date().toISOString(),
     });
-
-    // If the dedicated table does not exist yet, fall back to transactions table
-    if (error) {
-      const { error: err2 } = await supabase.from("transactions").insert({
-        elect_project_id: projectId ?? null,
-        amount,
-        gateway_type: 0,
-        transaction_type: transactionType,
-        status: 2,
-        bank_transaction_id: receiptNumber ?? null,
-        description: description ?? null,
-        solar_created: jalaliDate ?? null,
-        updated_at: new Date().toISOString(),
-      });
-      if (err2) throw err2;
-    }
+    if (error) throw error;
 
     revalidatePath("/app/accounting");
     return { ok: true };
@@ -405,8 +269,8 @@ export async function registerPayment(
 }
 
 /**
- * Mark an engineer payment item as paid.
- * Accessible to Accountant role only.
+ * Mark all pending payment items for an engineer as approved (paid).
+ * Accessible to Accountant and Administrator roles.
  */
 export async function markEngineerPayment(
   engineerId: string,
@@ -422,50 +286,17 @@ export async function markEngineerPayment(
       return { ok: false, error: "اطلاعات ناقص است" };
     }
 
-    const USE_MOCK =
-      process.env.USE_MOCK_DATA === "true" ||
-      !process.env.NEXT_PUBLIC_SUPABASE_URL;
-
-    if (USE_MOCK) {
-      // In mock mode: mark all unapproved items for this engineer as approved
-      const { mockAccountingService } = await import("@/services/mock/accounting");
-      const tasks = await mockAccountingService.getEngPaymentTasks();
-      for (const task of tasks) {
-        const lists = await mockAccountingService.getEngPaymentLists(task.id);
-        for (const item of lists) {
-          if (item.engineerId === engineerId && !item.isApproved) {
-            await mockAccountingService.approveEngPayment(item.id);
-          }
-        }
-      }
-      revalidatePath("/app/accounting");
-      return { ok: true };
-    }
-
     const supabase = await createClient();
+    const { error } = await supabase
+      .from("eng_payment_lists")
+      .update({
+        is_approved: true,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("engineer_id", engineerId)
+      .eq("is_approved", false);
 
-    // Try dedicated engineer_payments table first
-    const { error } = await supabase.from("engineer_payments").insert({
-      engineer_id: engineerId,
-      amount,
-      payment_date: new Date().toLocaleDateString("fa-IR"),
-      status: "paid",
-      created_at: new Date().toISOString(),
-    });
-
-    if (error) {
-      // Fall back to approving pending eng_payment_lists rows
-      const { error: err2 } = await supabase
-        .from("eng_payment_lists")
-        .update({
-          is_approved: true,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("engineer_id", engineerId)
-        .eq("is_approved", false);
-
-      if (err2) throw err2;
-    }
+    if (error) throw error;
 
     revalidatePath("/app/accounting");
     return { ok: true };
@@ -531,20 +362,4 @@ function rowToEngPaymentList(r: Record<string, unknown>): EngPaymentList {
     isApproved: Boolean(r.is_approved),
     createdAt: r.created_at as string,
   };
-}
-
-// ─── Helper used server-side ───────────────────────────────────────────────────
-
-function applyDateFilter(
-  items: Transaction[],
-  dateFrom?: string,
-  dateTo?: string
-): Transaction[] {
-  if (!dateFrom && !dateTo) return items;
-  return items.filter((t) => {
-    const d = t.solarCreated ?? "";
-    if (dateFrom && d < dateFrom) return false;
-    if (dateTo && d > dateTo) return false;
-    return true;
-  });
 }

@@ -1,25 +1,23 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import supabaseProjectsService from "@/services/supabase/projects";
 import type { ElectProject } from "@/services/mock/projects";
-
-async function getService() {
-  const provider = process.env.NEXT_PUBLIC_DATA_PROVIDER ?? "mock";
-  if (provider === "supabase") {
-    const mod = await import("@/services/supabase/projects");
-    return mod.default;
-  }
-  const mod = await import("@/services/mock/projects");
-  return mod.default;
-}
+import { getClientId, getCurrentUser } from "@/lib/auth";
 
 export async function createProject(
   formData: FormData
 ): Promise<{ ok: boolean; id?: string; error?: string }> {
   try {
-    const svc = await getService();
+    const clientId = await getClientId();
+    if (!clientId) {
+      return { ok: false, error: "شناسه مجموعه یافت نشد" };
+    }
+    const user = await getCurrentUser();
 
     const data: Partial<ElectProject> = {
+      clientId,
+      userId: user?.id,
       landlordName: formData.get("landlordName") as string,
       landlordNaCode: formData.get("landlordNaCode") as string,
       landlordPhoneNumber: formData.get("landlordPhoneNumber") as string,
@@ -71,7 +69,7 @@ export async function createProject(
       return { ok: false, error: "آدرس الزامی است" };
     }
 
-    const result = await svc.upsert(data);
+    const result = await supabaseProjectsService.upsert(data);
     revalidatePath("/app/projects");
     return { ok: true, id: result.id };
   } catch (err) {

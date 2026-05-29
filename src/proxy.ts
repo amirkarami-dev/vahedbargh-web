@@ -1,6 +1,26 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+/** Decode the `roles` claim from a JWT without verifying the signature.
+ *  Verification is handled by Supabase — we trust the token because getUser()
+ *  has already validated it server-side. */
+function decodeJwtRoles(token: string | undefined): string[] {
+  if (!token) return [];
+  try {
+    const [, payloadB64] = token.split(".");
+    if (!payloadB64) return [];
+    const padding = "=".repeat((4 - (payloadB64.length % 4)) % 4);
+    const json = atob(
+      payloadB64.replace(/-/g, "+").replace(/_/g, "/") + padding
+    );
+    const payload = JSON.parse(json) as { roles?: unknown };
+    if (!Array.isArray(payload.roles)) return [];
+    return payload.roles.filter((r): r is string => typeof r === "string");
+  } catch {
+    return [];
+  }
+}
+
 const SUPABASE_URL =
   process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
@@ -40,28 +60,54 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // ── /admin/* routes ────────────────────────────────────────────────────────
-  const isAdminLoginPage = pathname === "/admin/login";
+  // Login page and its sub-pages (e.g. /admin/login/otp) are public.
+  const isAdminLoginPage =
+    pathname === "/admin/login" || pathname.startsWith("/admin/login/");
 
   if (pathname.startsWith("/admin")) {
+    // 1. Not authenticated → send to login
     if (!user && !isAdminLoginPage) {
       const loginUrl = new URL("/admin/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }
 
-    if (user && isAdminLoginPage) {
-      return NextResponse.redirect(new URL("/admin", request.url));
+    if (user) {
+      // 2. Authenticated — check AdminPanel role from JWT
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const roles = decodeJwtRoles(session?.access_token);
+      const hasAdminPanel =
+        roles.includes("AdminPanel") || roles.includes("Administrator");
+
+      // 3. Has role + is on login page → bounce to dashboard
+      if (isAdminLoginPage && hasAdminPanel) {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
+
+      // 4. Has role → proceed normally
+      if (!isAdminLoginPage && hasAdminPanel) {
+        return supabaseResponse;
+      }
+
+      // 5. No AdminPanel role + not on login page → forbidden
+      if (!isAdminLoginPage && !hasAdminPanel) {
+        const loginUrl = new URL("/admin/login", request.url);
+        loginUrl.searchParams.set("error", "forbidden");
+        return NextResponse.redirect(loginUrl);
+      }
     }
 
     return supabaseResponse;
   }
 
   // ── /app/* routes ──────────────────────────────────────────────────────────
-  const isAppLoginPage = pathname === "/app/login";
+  const isAppLoginPage = pathname === "/login";
 
   if (pathname.startsWith("/app")) {
     if (!user && !isAppLoginPage) {
-      const loginUrl = new URL("/app/login", request.url);
+      const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }

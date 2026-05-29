@@ -87,7 +87,7 @@ function Card({
 
 export default async function BaseInfoPage() {
   const roles = await getUserRoles();
-  if (!hasRole(roles, "Administrator", "Employee")) {
+  if (!hasRole(roles, "Administrator", "Accountant", "Section")) {
     redirect("/app");
   }
 

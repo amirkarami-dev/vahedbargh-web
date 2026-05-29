@@ -6,20 +6,11 @@ import {
   PROJECT_LEVEL_COLORS,
   BuildingTypeLabel,
 } from "@/services/mock/projects";
+import supabaseProjectsService from "@/services/supabase/projects";
 import type { Metadata } from "next";
 import EngNotesForm from "./EngNotesForm";
 
 export const dynamic = "force-dynamic";
-
-async function getService() {
-  const provider = process.env.NEXT_PUBLIC_DATA_PROVIDER ?? "mock";
-  if (provider === "supabase") {
-    const mod = await import("@/services/supabase/projects");
-    return mod.default;
-  }
-  const mod = await import("@/services/mock/projects");
-  return mod.default;
-}
 
 export async function generateMetadata({
   params,
@@ -27,8 +18,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const svc = await getService();
-  const project = await svc.getById(id);
+  const project = await supabaseProjectsService.getById(id);
   return {
     title: project
       ? `نمای مهندس — ${project.fileNumber ?? project.electRequestNumber ?? id}`
@@ -139,8 +129,7 @@ export default async function EngProjectPage({
     redirect(`/app/projects/${id}`);
   }
 
-  const svc = await getService();
-  const project = await svc.getById(id);
+  const project = await supabaseProjectsService.getById(id);
   if (!project) notFound();
 
   const checklist = buildChecklist(project);

@@ -124,3 +124,55 @@ INSERT INTO site_settings (key, value) VALUES
   ('maintenance_mode',  'false'),
   ('solar_year_active', '1403')
 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now();
+
+-- ─── Kurdistan Province + Cities + Sections ───────────────────────────────────
+-- Official Iran province code for Kurdistan: 10
+
+INSERT INTO provinces (id, name) VALUES
+  (10, 'کردستان')
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO cities (id, name, province_id) VALUES
+  (1001, 'سنندج',     10),
+  (1002, 'مریوان',    10),
+  (1003, 'سقز',       10),
+  (1004, 'بیجار',     10),
+  (1005, 'کامیاران',  10),
+  (1006, 'دهگلان',    10),
+  (1007, 'قروه',      10),
+  (1008, 'بانه',      10),
+  (1009, 'دیواندره',  10),
+  (1010, 'سروآباد',   10),
+  (1011, 'شاهو',      10),
+  (1012, 'چناره',     10)
+ON CONFLICT (id) DO NOTHING;
+
+-- Engineering supervision districts (ناحیه‌های نظارت مهندسی) in Sanandaj
+INSERT INTO sections (id, section_name, city_id) VALUES
+  (101, 'ناحیه ۱ — مرکزی',       1001),
+  (102, 'ناحیه ۲ — آبیدر',       1001),
+  (103, 'ناحیه ۳ — قادرآباد',    1001),
+  (104, 'ناحیه ۴ — کوهساران',    1001),
+  (105, 'ناحیه ۵ — صاحب‌الزمان', 1001),
+  (106, 'ناحیه ۶ — مفتح',        1001),
+  (107, 'ناحیه ۷ — پردیسان',     1001),
+  (108, 'ناحیه ۸ — جنوب',        1001),
+  -- Marivan
+  (201, 'ناحیه ۱ — مرکزی',       1002),
+  (202, 'ناحیه ۲ — اطراف',       1002),
+  -- Saqqez
+  (301, 'ناحیه ۱ — مرکزی',       1003),
+  (302, 'ناحیه ۲ — اطراف',       1003),
+  -- Bijar
+  (401, 'ناحیه ۱ — مرکزی',       1004),
+  -- Kamyaran
+  (501, 'ناحیه ۱ — مرکزی',       1005),
+  -- Dehgolan
+  (601, 'ناحیه ۱ — مرکزی',       1006),
+  -- Qorveh
+  (701, 'ناحیه ۱ — مرکزی',       1007),
+  -- Bane
+  (801, 'ناحیه ۱ — مرکزی',       1008),
+  -- Divandarreh
+  (901, 'ناحیه ۱ — مرکزی',       1009)
+ON CONFLICT (id) DO NOTHING;

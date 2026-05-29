@@ -61,7 +61,7 @@ export async function getTickets(filter?: {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) redirect("/app/login");
+    if (!user) redirect("/login");
 
     let query = supabase
       .from("support_tickets")
@@ -132,7 +132,7 @@ export async function getTicketById(id: string): Promise<{
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) redirect("/app/login");
+    if (!user) redirect("/login");
 
     const [ticketRes, repliesRes] = await Promise.all([
       supabase

@@ -18,6 +18,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       defaultTheme="dark"
       enableSystem
       disableTransitionOnChange={false}
+      scriptProps={{ "data-cfasync": "false", suppressHydrationWarning: true }}
     >
       {children}
     </NextThemesProvider>

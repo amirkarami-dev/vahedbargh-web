@@ -48,7 +48,7 @@ export default async function AppFilesPage({
   searchParams: Promise<{ q?: string }>;
 }) {
   const roles = await getUserRoles();
-  if (roles.length === 0) redirect("/app/login");
+  if (roles.length === 0) redirect("/login");
 
   const { q } = await searchParams;
 

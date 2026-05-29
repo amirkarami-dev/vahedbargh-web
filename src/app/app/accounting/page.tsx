@@ -33,7 +33,7 @@ export default async function AppAccountingPage({
 }) {
   // Role guard
   const roles = await getUserRoles();
-  if (!hasRole(roles, "Accountant", "Administrator")) {
+  if (!hasRole(roles, "Administrator", "Engineer", "Accountant", "Section")) {
     redirect("/app");
   }
 

@@ -6,19 +6,30 @@ import { usePathname } from "next/navigation";
 import { appLogoutAction } from "@/app/app/logout/actions";
 import dynamic from "next/dynamic";
 import {
-  Briefcase,
-  HardHat,
+  LayoutDashboard,
+  FolderPlus,
+  PlusCircle,
+  List,
+  Zap,
+  Layers,
+  User,
+  GitBranch,
+  ClipboardList,
+  Activity,
   Calculator,
-  MessageSquare,
+  CreditCard,
+  BarChart2,
+  FileBarChart,
+  FileText,
+  BookOpen,
+  Database,
   Users,
-  Settings,
+  FolderOpen,
+  MessageSquare,
+  UserCircle,
   LogOut,
   ChevronLeft,
-  UserCircle,
   X,
-  ClipboardList,
-  PlusCircle,
-  Wrench,
 } from "lucide-react";
 import type { Role } from "@/lib/auth";
 
@@ -50,49 +61,157 @@ const ALL_ROLES: Role[] = [
   "Section",
 ];
 
+const PROFILE_ROLES: Role[] = [
+  "Administrator",
+  "Engineer",
+  "Employee",
+  "Accountant",
+  "ElectAdmin",
+  "Section",
+];
+
 const navSections: NavSection[] = [
+  // ── داشبورد ──────────────────────────────────────────────────────────────
+  {
+    items: [
+      {
+        href: "/app",
+        label: "داشبورد",
+        icon: LayoutDashboard,
+        exact: true,
+        roles: ALL_ROLES,
+      },
+    ],
+  },
+
+  // ── پروژه‌ها ──────────────────────────────────────────────────────────────
   {
     title: "پروژه‌ها",
     items: [
       {
-        href: "/app/projects",
-        label: "پروژه‌های من",
-        icon: Briefcase,
-        roles: ALL_ROLES,
+        href: "/app/projects/create",
+        label: "ایجاد پرونده",
+        icon: FolderPlus,
+        roles: ["Administrator", "Section"],
       },
       {
         href: "/app/projects/new",
-        label: "پروژه جدید",
+        label: "ثبت پروژه جدید",
         icon: PlusCircle,
         roles: ["ElectAdmin"],
       },
-    ],
-  },
-  {
-    title: "کار مهندسی",
-    items: [
       {
-        href: "/app/eng-work",
-        label: "کارهای مهندسی",
-        icon: Wrench,
-        roles: ["Engineer", "Administrator"],
+        href: "/app/projects/elect-projects",
+        label: "لیست پرونده‌ها",
+        icon: List,
+        roles: ["Administrator", "Section", "Employee"],
+      },
+      {
+        href: "/app/projects/elect-projects-edc",
+        label: "پرونده‌های EDC",
+        icon: Zap,
+        roles: ["ElectAdmin"],
+      },
+      {
+        href: "/app/projects/panel-maker",
+        label: "پرونده‌های تابلوساز",
+        icon: Layers,
+        roles: ["PanelMaker"],
+      },
+      {
+        href: "/app/projects/eng-process",
+        label: "پرونده‌های من",
+        icon: User,
+        roles: ["Engineer"],
+      },
+      {
+        href: "/app/projects/edc-process",
+        label: "فرآیندهای EDC",
+        icon: GitBranch,
+        roles: ["ElectAdmin"],
+      },
+      {
+        href: "/app/projects/process",
+        label: "فرآیند بازرسی",
+        icon: GitBranch,
+        roles: ["Administrator", "Section"],
+      },
+      {
+        href: "/app/projects/process-list",
+        label: "لیست فرآیندها",
+        icon: ClipboardList,
+        roles: ["Administrator", "Section"],
       },
     ],
   },
+
+  // ── کارکرد ───────────────────────────────────────────────────────────────
   {
-    title: "مدیریت",
+    title: "کارکرد",
+    items: [
+      {
+        href: "/app/eng-work",
+        label: "کارکرد مهندسین",
+        icon: Activity,
+        roles: ["Administrator", "Engineer", "Employee", "Accountant"],
+      },
+    ],
+  },
+
+  // ── مالی ─────────────────────────────────────────────────────────────────
+  {
+    title: "مالی",
     items: [
       {
         href: "/app/accounting",
         label: "حسابداری",
         icon: Calculator,
-        roles: ["Accountant", "Administrator"],
+        exact: true,
+        roles: ["Administrator", "Engineer", "Accountant", "Section"],
       },
       {
-        href: "/app/support",
-        label: "پشتیبانی",
-        icon: MessageSquare,
-        roles: ["Administrator", "Employee", "Engineer", "ElectAdmin", "Section"],
+        href: "/app/accounting/eng-payment",
+        label: "پرداخت مهندسین",
+        icon: CreditCard,
+        roles: ["Accountant"],
+      },
+    ],
+  },
+
+  // ── گزارش‌ها ──────────────────────────────────────────────────────────────
+  {
+    title: "گزارش‌ها",
+    items: [
+      {
+        href: "/app/reports/elect-projects",
+        label: "گزارش پرونده‌ها",
+        icon: FileBarChart,
+        roles: ["Administrator"],
+      },
+      {
+        href: "/app/reports/eng-invoices",
+        label: "فاکتور مهندسین",
+        icon: FileText,
+        roles: ["Accountant"],
+      },
+      {
+        href: "/app/reports/eng-reports",
+        label: "گزارش من",
+        icon: BookOpen,
+        roles: ["Engineer"],
+      },
+    ],
+  },
+
+  // ── ابزارها ───────────────────────────────────────────────────────────────
+  {
+    title: "ابزارها",
+    items: [
+      {
+        href: "/app/base-info",
+        label: "اطلاعات پایه",
+        icon: Database,
+        roles: ["Administrator", "Accountant", "Section"],
       },
       {
         href: "/app/users",
@@ -100,22 +219,30 @@ const navSections: NavSection[] = [
         icon: Users,
         roles: ["Administrator"],
       },
-      {
-        href: "/app/base-info",
-        label: "اطلاعات پایه",
-        icon: Settings,
-        roles: ["Administrator", "Employee"],
-      },
     ],
   },
+
+  // ── حساب کاربری ──────────────────────────────────────────────────────────
   {
     title: "حساب کاربری",
     items: [
       {
+        href: "/app/files",
+        label: "فایل‌های من",
+        icon: FolderOpen,
+        roles: ["Administrator", "Engineer", "PanelMaker", "ElectAdmin", "Section"],
+      },
+      {
+        href: "/app/support",
+        label: "پشتیبانی",
+        icon: MessageSquare,
+        roles: ["Administrator", "Engineer", "Employee", "Accountant"],
+      },
+      {
         href: "/app/profile",
         label: "پروفایل",
         icon: UserCircle,
-        roles: ALL_ROLES,
+        roles: PROFILE_ROLES,
       },
     ],
   },
@@ -132,7 +259,7 @@ export default function AppSidebar({ role, open, onClose }: AppSidebarProps) {
 
   function isActive(href: string, exact?: boolean) {
     if (exact) return pathname === href;
-    return pathname.startsWith(href);
+    return pathname === href || pathname.startsWith(href + "/");
   }
 
   function canSee(item: NavItem): boolean {
@@ -186,17 +313,17 @@ export default function AppSidebar({ role, open, onClose }: AppSidebarProps) {
                       key={item.href}
                       href={item.href}
                       onClick={onClose}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group ${
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all group ${
                         active
                           ? "bg-[var(--accent-primary)]/15 text-[var(--accent-primary)]"
                           : "text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]"
                       }`}
                     >
                       <item.icon
-                        className={`w-5 h-5 flex-shrink-0 ${active ? "text-[var(--accent-primary)]" : ""}`}
+                        className={`w-4.5 h-4.5 flex-shrink-0 ${active ? "text-[var(--accent-primary)]" : ""}`}
                       />
-                      <span className="flex-1">{item.label}</span>
-                      {active && <ChevronLeft className="w-4 h-4 opacity-60" />}
+                      <span className="flex-1 text-[13px]">{item.label}</span>
+                      {active && <ChevronLeft className="w-3.5 h-3.5 opacity-60" />}
                     </Link>
                   );
                 })}

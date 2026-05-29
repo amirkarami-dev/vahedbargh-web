@@ -1,6 +1,20 @@
 "use server";
 
 import { createAdminClient, createClient } from "@/lib/supabase-server";
+import { getUserRoles, hasRole } from "@/lib/auth";
+
+/** Verify the calling user holds AdminPanel or Administrator role. */
+async function assertAdminPanel(): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("احراز هویت نشده");
+
+  const roles = await getUserRoles();
+  if (!hasRole(roles, "AdminPanel", "Administrator"))
+    throw new Error("دسترسی غیر مجاز");
+}
 
 export interface UserRecord {
   id: string;
@@ -14,6 +28,7 @@ export interface UserRecord {
 
 export async function getUsers(): Promise<UserRecord[]> {
   try {
+    await assertAdminPanel();
     const supabase = await createAdminClient();
     const { data: { users }, error } = await supabase.auth.admin.listUsers();
     if (error) throw error;
@@ -50,6 +65,7 @@ export async function inviteUser(
   role: string
 ): Promise<{ ok: boolean; error?: string }> {
   try {
+    await assertAdminPanel();
     const supabase = await createAdminClient();
     const { error } = await supabase.auth.admin.inviteUserByEmail(email, {
       data: { role },
@@ -66,6 +82,7 @@ export async function updateUserRole(
   role: string
 ): Promise<{ ok: boolean }> {
   try {
+    await assertAdminPanel();
     const supabase = await createAdminClient();
     // Upsert role (delete old, insert new)
     await supabase.from("user_roles").delete().eq("user_id", userId);
@@ -79,6 +96,7 @@ export async function updateUserRole(
 
 export async function deactivateUser(userId: string): Promise<{ ok: boolean }> {
   try {
+    await assertAdminPanel();
     const supabase = await createAdminClient();
     const { error } = await supabase
       .from("profiles")

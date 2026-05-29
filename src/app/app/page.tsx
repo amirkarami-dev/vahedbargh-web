@@ -273,7 +273,7 @@ export default async function AppDashboardPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/app/login");
+    redirect("/login");
   }
 
   const [roles, profileRes] = await Promise.all([

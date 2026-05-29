@@ -90,13 +90,13 @@ export default async function EngWorkPage() {
   const [user, roles] = await Promise.all([getCurrentUser(), getUserRoles()]);
 
   if (!user) {
-    redirect("/app/login");
+    redirect("/login");
   }
 
   const isAdmin = hasRole(roles, "Administrator", "SuperUser");
   const isEngineer = hasRole(roles, "Engineer");
 
-  if (!isAdmin && !isEngineer) {
+  if (!isAdmin && !isEngineer && !hasRole(roles, "Employee", "Accountant")) {
     redirect("/app");
   }
 

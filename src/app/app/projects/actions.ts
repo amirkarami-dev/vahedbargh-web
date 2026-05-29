@@ -1,37 +1,17 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import mockProjectsService from "@/services/mock/projects";
+import supabaseProjectsService from "@/services/supabase/projects";
+import supabaseEngineersService from "@/services/supabase/engineers";
 import type { ElectProject } from "@/services/mock/projects";
-import mockEngineersService from "@/services/mock/engineers";
 import type { Engineer } from "@/services/mock/engineers";
 
-async function getProjectsService() {
-  const provider = process.env.NEXT_PUBLIC_DATA_PROVIDER ?? "mock";
-  if (provider === "supabase") {
-    const mod = await import("@/services/supabase/projects");
-    return mod.default;
-  }
-  return mockProjectsService;
-}
-
-async function getEngineersServiceImpl() {
-  const provider = process.env.NEXT_PUBLIC_DATA_PROVIDER ?? "mock";
-  if (provider === "supabase") {
-    const mod = await import("@/services/supabase/engineers");
-    return mod.default;
-  }
-  return mockEngineersService;
-}
-
 export async function getProjectById(id: string): Promise<ElectProject | null> {
-  const svc = await getProjectsService();
-  return svc.getById(id);
+  return supabaseProjectsService.getById(id);
 }
 
 export async function getEngineers(): Promise<Engineer[]> {
-  const svc = await getEngineersServiceImpl();
-  return svc.getAll({ inactive: false });
+  return supabaseEngineersService.getAll({ inactive: false });
 }
 
 export async function assignEngineer(
@@ -41,8 +21,7 @@ export async function assignEngineer(
   engineerPhone: string
 ): Promise<{ ok: boolean; error?: string }> {
   try {
-    const svc = await getProjectsService();
-    await svc.upsert({
+    await supabaseProjectsService.upsert({
       id: projectId,
       supervisorName: engineerName,
       supervisorPhoneNumber: engineerPhone,
@@ -62,8 +41,7 @@ export async function updateProjectLevel(
   level: number
 ): Promise<{ ok: boolean; error?: string }> {
   try {
-    const svc = await getProjectsService();
-    await svc.upsert({
+    await supabaseProjectsService.upsert({
       id: projectId,
       projectLevel: level,
     });
@@ -81,8 +59,7 @@ export async function stopProject(
   reason: string
 ): Promise<{ ok: boolean; error?: string }> {
   try {
-    const svc = await getProjectsService();
-    await svc.stop(id, reason);
+    await supabaseProjectsService.stop(id, reason);
     revalidatePath(`/app/projects/${id}`);
     revalidatePath(`/app/projects/${id}/process`);
     return { ok: true };
@@ -96,8 +73,7 @@ export async function resumeProject(
   id: string
 ): Promise<{ ok: boolean; error?: string }> {
   try {
-    const svc = await getProjectsService();
-    await svc.upsert({ id, isStop: false, stopDes: undefined });
+    await supabaseProjectsService.upsert({ id, isStop: false, stopDes: undefined });
     revalidatePath(`/app/projects/${id}`);
     revalidatePath(`/app/projects/${id}/process`);
     return { ok: true };

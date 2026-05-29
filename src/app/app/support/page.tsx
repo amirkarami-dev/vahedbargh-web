@@ -99,10 +99,13 @@ export default async function AppSupportPage({ searchParams }: PageProps) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/app/login");
+  if (!user) redirect("/login");
 
   const roles = await getUserRoles();
-  const isAdmin = hasRole(roles, "Administrator", "SuperUser", "Employee", "ElectAdmin", "Section");
+  if (!hasRole(roles, "Administrator", "SuperUser", "Engineer", "Employee", "Accountant")) {
+    redirect("/app");
+  }
+  const isAdmin = hasRole(roles, "Administrator", "SuperUser", "Employee");
   const isEngineer = hasRole(roles, "Engineer");
 
   const params = await searchParams;
