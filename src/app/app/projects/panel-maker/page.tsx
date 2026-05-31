@@ -16,7 +16,7 @@ export default async function PanelMakerProjectsPage() {
   const supabase = await createClient();
   const { data: projects, error } = await supabase
     .from("elect_projects")
-    .select("id, title, owner_name, elect_project_status, created_at, panel_need, panel_maker_submit")
+    .select("id, title:file_number, owner_name:landlord_name, elect_project_status, created_at, panel_need, panel_maker_submit")
     .eq("is_delete", false)
     .eq("panel_need", true)
     .order("created_at", { ascending: false })

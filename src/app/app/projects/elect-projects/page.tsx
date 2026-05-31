@@ -25,7 +25,7 @@ export default async function ElectProjectsPage() {
   // Fetch projects with basic columns
   const { data: projects, error } = await supabase
     .from("elect_projects")
-    .select("id, title, owner_name, elect_project_status, created_at, is_delete")
+    .select("id, title:file_number, owner_name:landlord_name, elect_project_status, created_at, is_delete")
     .eq("is_delete", false)
     .order("created_at", { ascending: false })
     .limit(100);

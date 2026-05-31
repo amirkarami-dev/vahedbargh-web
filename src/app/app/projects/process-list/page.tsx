@@ -26,7 +26,7 @@ export default async function ProcessListPage() {
       inspection_status,
       accepted,
       created_at,
-      elect_projects ( title, owner_name ),
+      elect_projects ( title:file_number, owner_name:landlord_name ),
       engineers ( full_name )
     `)
     .eq("is_delete", false)

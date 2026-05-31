@@ -37,7 +37,7 @@ export default async function EngProcessPage() {
           inspection_status,
           accepted,
           created_at,
-          elect_projects ( title, owner_name )
+          elect_projects ( title:file_number, owner_name:landlord_name )
         `)
         .eq("engineer_id", engRecord.id)
         .eq("is_delete", false)

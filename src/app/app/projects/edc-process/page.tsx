@@ -26,7 +26,7 @@ export default async function EdcProcessPage() {
       inspection_status,
       accepted,
       created_at,
-      elect_projects ( title, owner_name )
+      elect_projects ( title:file_number, owner_name:landlord_name )
     `)
     .eq("is_delete", false)
     .order("created_at", { ascending: false })
